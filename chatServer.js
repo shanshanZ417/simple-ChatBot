@@ -9,6 +9,21 @@ var app = express(); // webapp
 var http = require('http').Server(app); // connects http library to server
 var io = require('socket.io')(http); // connect websocket library to server
 var serverPort = 8000;
+var dict = {
+    penName: "Dan Brown",
+    firstName: "Shanshan",
+    secondName: "Jersy",
+    job: "drinker",
+    firstBody: "finger",
+    secondBody: "lips",
+    place: "the Empire State Building",
+    firstAdj: "cute",
+    secondAdj: "annoying",
+    verb: "Singing",
+    objects: "puppies",
+    quotes: "Love is a touch and yet not a touch",
+    exclamation: "Kewl",
+};
 
 
 //---------------------- WEBAPP SERVER SETUP ---------------------------------//
@@ -30,9 +45,9 @@ io.on('connect', function(socket) {
   var questionNum = 0; // keep count of question, used for IF condition.
   socket.on('loaded', function(){// we wait until the client has loaded and contacted us that it is ready to go.
 
-  socket.emit('answer',"Hey, Hello I am \"___*-\" a simple chat bot example."); //We start with the introduction;
-  setTimeout(timedQuestion, 2500, socket,"What is your Name?"); // Wait a moment and respond with a question.
-
+  socket.emit('answer',"Hey there, I am Misaki. Give me some words, I will generate a great random story."); //We start with the introduction;
+  setTimeout(timedQuestion, 2500, socket,"What is your pen name?"); // Wait a moment and respond with a question.
+0
 });
   socket.on('message', (data)=>{ // If we get a new message from the client we process it;
         console.log(data);
@@ -51,49 +66,89 @@ function bot(data,socket,questionNum) {
 
 /// These are the main statments that make up the conversation.
   if (questionNum == 0) {
+  dict.penName= input;
   answer= 'Hello ' + input + ' :-)';// output response
   waitTime =2000;
-  question = 'How old are you?';			    	// load next question
+  question = 'What is the name of your protagonist?';			    	// load next question
   }
   else if (questionNum == 1) {
-  answer= 'Really ' + input + ' Years old? So that means you where born in: ' + (2018-parseInt(input));// output response
+  dict.firstName = input;
+  answer = 'Great name!';
   waitTime =2000;
-  question = 'Where do you live?';			    	// load next question
+  question = 'What is the name of the secondary character?';			    	// load next question
   }
   else if (questionNum == 2) {
-  answer= ' Cool! I have never been to ' + input+'.';
+  dict.secondName = input;
+  answer = 'Not bad lol';
+  //answer= ' Cool! I have never been to ' + input+'.';
   waitTime =2000;
-  question = 'Whats your favorite Color?';			    	// load next question
+  question = 'Give me a body part please :)';			    	// load next question
   }
   else if (questionNum == 3) {
-  answer= 'Ok, ' + input+' it is.';
-  socket.emit('changeBG',input.toLowerCase());
+  dict.firstBody = input;
+  answer= 'Ok, kewl.';
   waitTime = 2000;
-  question = 'Can you still read the font?';			    	// load next question
+  question = 'Give me another body part!';			    	// load next question
   }
   else if (questionNum == 4) {
-    if(input.toLowerCase()==='yes'|| input===1){
-      answer = 'Perfect!';
-      waitTime =2000;
-      question = 'Whats your favorite place?';
-    }
-    else if(input.toLowerCase()==='no'|| input===0){
-        socket.emit('changeFont','white'); /// we really should look up the inverse of what we said befor.
-        answer='How about now?'
-        question='';
-        waitTime =0;
-        questionNum--; // Here we go back in the question number this can end up in a loop
-    }else{
-      answer=' I did not understand you. Can you please answer with simply with yes or no.'
-      question='';
-      questionNum--;
-      waitTime =0;
-    }
-  // load next question
+  dict.secondBody = input;
+  answer= 'Wow, things get interesting.';
+  waitTime = 2000;
+  question = 'How about a name of a place?';            // load next question
   }
-  else{
-    answer= 'I have nothing more to say!';// output response
-    waitTime =0;
+  else if (questionNum == 5) {
+  dict.place= input;
+  answer= 'Be patient, there are just a few question left.';
+  waitTime = 2000;
+  question = 'Please give me adjective.';            // load next question
+  }
+  else if (questionNum == 6) {
+  dict.firstAdj = input;
+  answer= 'That\'s a good one';
+  waitTime = 2000;
+  question = 'Another adjective, please.';            // load next question
+  }
+  else if (questionNum == 7) {
+  dict.secondAdj = input;
+  answer= '';
+  waitTime = 2000;
+  question = 'Give me a verb with -ing in the end :)';            // load next question
+  }
+  else if (questionNum == 8) {
+  dict.verb = input;
+  answer= 'Three more questions!';
+  waitTime = 2000;
+  question = 'A plural objects';            // load next question
+  }
+  else if (questionNum == 9) {
+  dict.objects = input;
+  answer= '';
+  waitTime = 2000;
+  question = 'A quotes in your deepest memory.';            // load next question
+  }
+  else if (questionNum == 10) {
+  dict.quotes = input;
+  answer= 'Okay, okay. Final one!';
+  waitTime = 2000;
+  question = 'A exclamation you like?';            // load next question
+  }
+  else if (questionNum == 11) {
+  dict.exclamation = input;
+  answer= 'Kidding lol. This is the real final one!';
+  waitTime = 2000;
+  question = 'A job title please?';            // load next question
+  }
+  else {
+    dict.job = input;
+    answer = 'Here is REAL MAGIC.' + '\n'
+    + dict.firstName + ' had a complex feeling towards ' + dict.secondName + 
+    ', a ' + dict.job + ' with ' + dict.firstAdj + ' ' + dict.firstBody + 
+    ' and ' + dict.secondAdj + ' ' + dict.secondBody + '. ' +
+    dict.verb + ' at ' + dict.place + ', ' + dict.firstName + ' said" ' +
+    dict.exclamation + ', All I need is just ' + dict.objects + '". "' + dict.quotes +
+    '", ' + dict.secondName + " replied." + '\n' +
+    'THE END.' + '\n' + 'BY ' + dict.penName;
+    waitTime = 2000;
     question = '';
   }
 
